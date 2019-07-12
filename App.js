@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { Text, View, StyleSheet ,Image} from 'react-native';
+import { Button,Text, View, StyleSheet ,Image,TouchableOpacity} from 'react-native';
 import Constants from 'expo-constants';
+
+
 
 // You can import from local files
 // import Quiz from './components/Quiz';
@@ -19,6 +21,8 @@ export default class App extends React.Component {
       question : null,
       correctAnswer : null,
       counter: 0,
+      checked: 'first',
+
     }
   }
 
@@ -33,11 +37,12 @@ export default class App extends React.Component {
         .then(res => res.json())
         .then(res => {
             
-          listData.push(res.results)
-          this.setState({
-            loading : false,
-            quiz : listData
-          })
+          const {results} = res
+                // console.log("message********",results)
+                this.setState({
+                  quiz: results,
+                  loading : false
+                })
         
 
         }).catch(e => {
@@ -80,7 +85,7 @@ export default class App extends React.Component {
 
    Data() {
     const {quiz} = this.state;
-    console.log("quiz.lenght",quiz[0]);
+    
     return quiz[0].map(function(news, i){
       return(
         
@@ -94,27 +99,58 @@ export default class App extends React.Component {
     });
   }
 
+  incrementCounter(){
+    this.setState({
+        counter: this.state.counter + 1
+    })
+}
+
 
   render() {
-    const {loading,quiz} = this.state;
-    console.log("Quiz Inside", quiz[0]);
+    const {loading,quiz,counter,checked} = this.state;
+    // console.log("Quiz Inside", quiz);
     // console.log("quiz.lenght",quiz.length);
 
+    // const dispalyQuiz = quiz.length > 0 ? <View>
+    //   <Text style={styles.titleText}>WelCome To Quiz App</Text>
+    //   <Text>{counter+1 }<Text>)</Text>{quiz[counter].question}</Text>
+    
+    //   <Text>{quiz[counter].correct_answer}</Text>
+    //   <Button color  ="blue"  title="Next" onPress={() => this.incrementCounter()}/>
+    //  </View>: <Text>Loading</Text>
    
    
-     const dispalyQuiz = quiz.lenght < 0 && 
-      quiz[0].map(function(news, i){
-      return(
-        
-        <View key={i}>
-          <Text>{news.question}</Text>
-          <View>
-            {/* <Text>{news.text}</Text> */}
-          </View>
-        </View>
-      );
-    });
+     const dispalyQuiz = quiz.length > 0 ? <View>
+      <Text style={styles.titleText}>WelCome To Quiz App</Text>
+        <View>
+          {quiz.map((vale,index) => 
+            {
+           
 
+              return(
+                <View key = {index}>
+                  <Text style={styles.paragraph} >{index+1}){vale.question}</Text>
+                  {/* <Text>{vale.correct_answer}</Text> */}
+
+                  <TouchableOpacity style={{flex: 0.1,alignSelf: 'flex-start',alignItems: 'left',borderWidth:5,backgroundColor:'purple'}}
+                onPress={() => {
+                  this.setState({
+                    isCameraVisible : false
+                  });
+                }}>
+                  <Text>HAseb</Text> 
+                  </TouchableOpacity>
+
+              </View>
+             
+              )
+             
+            })}
+        </View>
+      
+        </View>: <Text>Loading</Text>
+    
+  // console.log("Counter **************",quiz[counter]);
    
 
     return (
@@ -125,7 +161,7 @@ export default class App extends React.Component {
     source={{ uri: "https://thumbs.gfycat.com/LoathsomeVastBarnswallow-size_restricted.gif"}} /> 
      }
      {!loading && 
-        <View>
+        <View style={styles.container}>
           {dispalyQuiz}
         </View>}
       </View>
@@ -136,15 +172,30 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    
     paddingTop: Constants.statusBarHeight,
     backgroundColor: '#ecf0f1',
     padding: 8,
   },
   paragraph: {
-    margin: 24,
+    margin: 11,
     fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    
+    
+    
   },
+  titleText: {
+    fontSize:18,
+    fontWeight: 'bold',
+    color : 'red'
+    
+  },
+
+  option: {
+    fontSize:10,
+    fontWeight: 'bold',
+    marginLeft : 5,
+    borderWidth : 5,    
+  },
+  
 });
